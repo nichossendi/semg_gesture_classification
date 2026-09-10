@@ -1,0 +1,31 @@
+# Tested with Python 3.11–3.13 on macOS Apple Silicon.
+# Create and activate a virtual environment before installing:
+#   python3.13 -m venv .venv
+#   source .venv/bin/activate
+#   python -m pip install --upgrade pip
+#   python -m pip install -r requirements.txt
+
+# Data loading, validation, and signal processing
+numpy>=1.26,<3
+pandas>=2.2,<3
+scipy>=1.13,<2
+pyarrow>=16,<25
+PyYAML>=6,<7
+
+# Classical machine learning and evaluation
+scikit-learn>=1.5,<2
+joblib>=1.4,<2
+
+# Visualization and exploratory notebooks
+matplotlib>=3.9,<4
+seaborn>=0.13,<1
+jupyterlab>=4.2,<5
+ipykernel>=6.29,<8
+
+# 1D CNN training; uses Apple MPS automatically when supported by the runtime
+torch>=2.4,<3
+
+# Code quality and tests
+pytest>=8.2,<9
+ruff>=0.6,<1
+
