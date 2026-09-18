@@ -1,0 +1,25 @@
+project:
+  name: semg_gesture_classification
+  dataset: ninapro_db1
+
+subject_split:
+  seed: 20260907
+  algorithm: numpy.random.default_rng(seed).permutation
+  subject_ids: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]
+  train: [7, 24, 15, 27, 17, 25, 12, 26, 2, 21, 8, 3, 1, 22, 6, 9, 10, 5]
+  validation: [20, 23, 16]
+  test: [11, 14, 19]
+  holdout: [4, 13, 18]
+
+  quality_screen:
+    metric: proportion of rest-labeled contiguous runs with peak absolute EMG amplitude >= 1.4
+    global_rate: 0.0740
+    train_rate: 0.0640
+    validation_rate: 0.0406
+    test_rate: 0.1119
+    holdout_rate: 0.1294
+    decision: >-
+      Rates differ across small three subject groups, but higher anomaly subjects are distributed
+      across train, test, and holdout rather than being concentrated solely in
+      test. No seed rerolling was performed after reviewing the screening data.
+
