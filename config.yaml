@@ -22,4 +22,8 @@ subject_split:
       Rates differ across small three subject groups, but higher anomaly subjects are distributed
       across train, test, and holdout rather than being concentrated solely in
       test. No seed rerolling was performed after reviewing the screening data.
-
+      
+windowing:
+  window_samples: 20        # 200 ms at 100 Hz
+  step_samples: 5            # 50 ms at 100 Hz
+  rest_peak_threshold: 1.4   # matches DATASET_MANIFEST.md rest-peak screening; see PREPROCESSING.md
