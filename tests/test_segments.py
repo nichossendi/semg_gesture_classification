@@ -3,10 +3,8 @@ import pytest
 
 from src.segments import add_run_id
 
-
 def _frame(rows):
     return pd.DataFrame(rows, columns = ["subject", "exercise", "restimulus", "rerepetition"])
-
 
 def test_add_run_id_groups_contiguous_matching_rows():
     frame = _frame(
@@ -27,7 +25,6 @@ def test_add_run_id_groups_contiguous_matching_rows():
     # fix here is the test's expected values, not the source.
     assert result["run_id"].tolist() == [1, 1, 2, 2, 2, 3]
 
-
 def test_add_run_id_does_not_merge_non_contiguous_matching_rows():
     # Rows 0 and 2 share identical key values but are not adjacent.
     # They must NOT be merged into the same run_id.
@@ -41,7 +38,6 @@ def test_add_run_id_does_not_merge_non_contiguous_matching_rows():
     result = add_run_id(frame)
 
     assert result["run_id"].tolist() == [1, 2, 3]
-
 
 def test_add_run_id_raises_on_missing_key_column():
     frame = pd.DataFrame({"subject": [1], "exercise": [2]})

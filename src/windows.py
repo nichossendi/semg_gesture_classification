@@ -19,7 +19,6 @@ from src.segments import RUN_KEY_COLUMNS, add_run_id
 
 DEFAULT_REST_PEAK_THRESHOLD = 1.4  # see DATASET_MANIFEST.md rest-peak screening
 
-
 @dataclass(frozen = True)
 class WindowConfig:
     """
@@ -41,7 +40,6 @@ class WindowConfig:
                 "between consecutive windows."
             )
 
-
 def _composite_label(exercise: int, restimulus: int) -> str:
     """
     Build a window's class label, unifying rest across exercises.
@@ -61,7 +59,6 @@ def _composite_label(exercise: int, restimulus: int) -> str:
     if restimulus == 0:
         return "rest"
     return f"{exercise}_{restimulus}"
-
 
 def make_windows(
     frame: pd.DataFrame,
@@ -90,7 +87,7 @@ def make_windows(
     Raises
     ------
     ValueError
-        If required columns are missing, or if any window's restimulus
+        If required columns are missing or if any window's restimulus
         values are not unanimous (see _resolve_window_label, this signals
         a bug in run construction, not real labeling ambiguity).
     RuntimeError
@@ -104,7 +101,7 @@ def make_windows(
     if missing_emg:
         raise ValueError(f"Missing EMG column(s): {missing_emg}")
 
-    frame = add_run_id(frame)  # also resets frame's row order to 0..len(frame)-1
+    frame = add_run_id(frame)  # also resets frame's row order to 0..len(frame) - 1
     windows: list[dict[str, object]] = []
 
     for run_id, run in frame.groupby("run_id", sort = False):
@@ -153,7 +150,6 @@ def make_windows(
         )
 
     return pd.DataFrame(windows)
-
 
 def _resolve_window_label(restimulus_window: np.ndarray) -> int:
     """

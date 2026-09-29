@@ -34,7 +34,7 @@ window is *always* unanimous. There is no real ambiguity left to vote on
 by the time windowing runs. "almost always" should have been "always, by
 construction."
 
-So `_resolve_window_label` does not vote. It asserts unanimity and raises
+So, `_resolve_window_label` does not vote. It asserts unanimity and raises
 `ValueError` if that is ever violated. A non-unanimous window is not a
 legitimate edge case to resolve gracefully. It would mean run boundary
 computation has a bug, and the correct response is to fail loudly and stop
@@ -52,7 +52,7 @@ destructive and auditable: whether/how to use the flag (exclude at
 training time, weight differently, or ignore it) is left to modeling code
 in a later day, not decided silently here.
 
-Run level screening found 7.40% of rest RUNS have peak amplitude >=1.4
+Run level screening found 7.40% of rest RUNS have peak amplitude >= 1.4
 somewhere in their duration. Window level screening found only 0.95%
 of rest WINDOWS individually exceed that threshold. These are
 not inconsistent, they measure different units. A run can be flagged by

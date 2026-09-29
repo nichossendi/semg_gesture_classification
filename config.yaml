@@ -26,4 +26,8 @@ subject_split:
 windowing:
   window_samples: 20        # 200 ms at 100 Hz
   step_samples: 5            # 50 ms at 100 Hz
-  rest_peak_threshold: 1.4   # matches DATASET_MANIFEST.md rest-peak screening; see PREPROCESSING.md
+  rest_peak_threshold: 1.4   # matches DATASET_MANIFEST.md rest-peak screening, see PREPROCESSING.md
+
+features:
+  zc_threshold: 0.01    # provisional default, see FEATURES.md
+  ssc_threshold: 0.01   # provisional default, see FEATURES.md

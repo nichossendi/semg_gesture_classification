@@ -5,7 +5,6 @@ from src.split import make_subject_split, validate_subject_split
 SUBJECT_IDS = list(range(1, 28))
 SEED = 20260907
 
-
 def test_same_seed_produces_identical_assignments() -> None:
     first = make_subject_split(SUBJECT_IDS, seed = SEED)
     second = make_subject_split(SUBJECT_IDS, seed = SEED)
@@ -18,13 +17,11 @@ def test_same_seed_produces_identical_assignments() -> None:
         "holdout": [4, 13, 18],
     }
 
-
 def test_split_is_mutually_exclusive_and_exhaustive() -> None:
     split = make_subject_split(SUBJECT_IDS, seed = SEED)
 
     validate_subject_split(split, expected_subject_ids = SUBJECT_IDS)
     assert [len(split[name]) for name in ("train", "validation", "test", "holdout")] == [18, 3, 3, 3]
-
 
 def test_validation_rejects_overlap() -> None:
     invalid_split = {

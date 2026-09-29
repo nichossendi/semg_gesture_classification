@@ -12,7 +12,7 @@ import pandas as pd
 REQUIRED_COLUMNS = frozenset(
     {"subject", "exercise", "stimulus", "restimulus", "repetition", "rerepetition"}
 )
-EMG_COLUMN_PATTERN = re.compile(r"^emg(?:[_-]?\d+)?$", flags=re.IGNORECASE)
+EMG_COLUMN_PATTERN = re.compile(r"^emg(?:[_-]?\d+)?$", flags = re.IGNORECASE)
 
 
 def _sort_key(value: object) -> tuple[int, float | str]:
@@ -24,13 +24,13 @@ def _sort_key(value: object) -> tuple[int, float | str]:
 
 def _sorted_unique(values: pd.Series) -> list[object]:
     """Return non-null unique values in a stable, numeric-aware order."""
-    return sorted(values.dropna().unique().tolist(), key=_sort_key)
+    return sorted(values.dropna().unique().tolist(), key = _sort_key)
 
 
 def _value_counts(values: pd.Series) -> dict[object, int]:
     """Return non-null value counts with stable, numeric-aware key order."""
     counts = values.dropna().value_counts().to_dict()
-    return dict(sorted(counts.items(), key=lambda item: _sort_key(item[0])))
+    return dict(sorted(counts.items(), key = lambda item: _sort_key(item[0])))
 
 
 def _find_emg_columns(columns: Iterable[str]) -> list[str]:
@@ -61,7 +61,8 @@ def load_ninapro_csv(
     *,
     exercises: tuple[int, ...] = (2, 3),
 ) -> tuple[pd.DataFrame, dict[str, object]]:
-    """Load a Ninapro csv file, validate its schema, filter exercises, and report its contents.
+    """
+    Load a Ninapro csv file, validate its schema, filter exercises, and report its contents.
 
     The report is calculated before filtering except for label-collision analysis,
     which applies only to the selected exercises.
@@ -70,7 +71,7 @@ def load_ninapro_csv(
         raise ValueError("At least one exercise identifier must be supplied.")
 
     csv_path = Path(path)
-    frame = pd.read_csv(csv_path).drop(columns=["Unnamed: 0"], errors="ignore")
+    frame = pd.read_csv(csv_path).drop(columns = ["Unnamed: 0"], errors = "ignore")
 
     missing = sorted(REQUIRED_COLUMNS.difference(frame.columns))
     if missing:
@@ -105,4 +106,3 @@ def load_ninapro_csv(
         "restimulus_label_scope": _label_report(filtered, "restimulus"),
     }
     return filtered, report
-

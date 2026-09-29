@@ -35,20 +35,18 @@ import yaml
 from src.data import load_ninapro_csv
 from src.windows import WindowConfig, make_windows
 
-
 def load_config() -> dict:
     with open(REPO_ROOT / "config.yaml") as f:
         return yaml.safe_load(f)
-
 
 def save_windows(windows: pd.DataFrame, out_dir: Path) -> None:
     """
     Split windowed output into a metadata table and a stacked EMG array.
 
     The `emg` column holds a (window_samples, n_channels) array per row,
-    which doesn't serialize to parquet as a clean, fixed shape type.
+    which does not serialize to parquet as a clean, fixed shape type.
     Forcing it in either explodes to hundreds of flat columns or needs a
-    nested list type that plain pandas.read_parquet doesn't hand back as a
+    nested list type that plain pandas.read_parquet does not hand back as a
     usable array automatically. Splitting into a lightweight, queryable
     metadata parquet table plus one contiguous .npy array, joined by row
     position via `window_index`, is the more standard pattern for this
@@ -67,7 +65,6 @@ def save_windows(windows: pd.DataFrame, out_dir: Path) -> None:
     print(f"\nSaved {len(metadata):,} windows:")
     print(f"  {out_dir / 'windows_emg.npy'}  shape = {emg_stack.shape}  dtype = {emg_stack.dtype}")
     print(f"  {out_dir / 'windows_metadata.parquet'}  {len(metadata.columns)} columns")
-
 
 def summarize(windows: pd.DataFrame, org_rest_pct: float = 58.53) -> None:
     print(f"\nTotal windows: {len(windows):,}")
@@ -90,7 +87,7 @@ def summarize(windows: pd.DataFrame, org_rest_pct: float = 58.53) -> None:
     # Rest windows that look surprisingly active (the actual anomaly
     # worth tracking, comparable to the original 7.40%-of-rest-runs figure) and
     # active windows correctly showing high amplitude (expected, not an
-    # anomaly at all). A blended number isn't directly comparable to
+    # anomaly at all). A blended number is not directly comparable to
     # anything already in the manifest.
 
     rest_above = windows.loc[is_rest, "peak_abs_amplitude_above_threshold"]
@@ -100,7 +97,6 @@ def summarize(windows: pd.DataFrame, org_rest_pct: float = 58.53) -> None:
 
     print("\nWindows per subject:")
     print(windows.groupby("subject").size().to_string())
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(description = __doc__)
@@ -134,7 +130,6 @@ def main() -> None:
 
     summarize(windows)
     save_windows(windows, REPO_ROOT / args.out)
-
 
 if __name__ == "__main__":
     main()

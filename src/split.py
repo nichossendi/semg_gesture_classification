@@ -8,7 +8,6 @@ import numpy as np
 
 SPLIT_NAMES = ("train", "validation", "test", "holdout")
 
-
 def make_subject_split(
     subject_ids: Iterable[int],
     *,
@@ -16,7 +15,8 @@ def make_subject_split(
     group_sizes: tuple[int, int, int, int] = (18, 3, 3, 3),
 ) -> dict[str, list[int]]:
     
-    """Create a seeded, mutually exclusive split of participant IDs.
+    """
+    Create a seeded, mutually exclusive split of participant IDs.
 
     The holdout group is assigned in the same random permutation as the other
     groups. It is not formed from manually selected leftovers.
@@ -40,7 +40,6 @@ def make_subject_split(
     validate_subject_split(split, expected_subject_ids = subjects)
     return split
 
-
 def validate_subject_split(
     split: dict[str, list[int]],
     *,
@@ -56,7 +55,7 @@ def validate_subject_split(
     if missing_groups or unexpected_groups:
         raise ValueError(
             f"Split groups must be exactly {SPLIT_NAMES}; "
-            f"missing={sorted(missing_groups)}, unexpected={sorted(unexpected_groups)}."
+            f"missing = {sorted(missing_groups)}, unexpected = {sorted(unexpected_groups)}."
         )
 
     assigned = [subject for group in split.values() for subject in group]
@@ -65,6 +64,6 @@ def validate_subject_split(
     if set(assigned) != expected:
         raise ValueError(
             "Split is not exhaustive. "
-            f"missing={sorted(expected.difference(assigned))}, "
-            f"unexpected={sorted(set(assigned).difference(expected))}."
+            f"missing = {sorted(expected.difference(assigned))}, "
+            f"unexpected = {sorted(set(assigned).difference(expected))}."
         )

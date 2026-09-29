@@ -3,7 +3,6 @@ import pytest
 
 from src import load_ninapro_csv
 
-
 def _synthetic_db1_csv(path) -> None:
     emg = {f"emg_{index}": [float(index)] * 4 for index in range(10)}
     pd.DataFrame(
@@ -19,12 +18,11 @@ def _synthetic_db1_csv(path) -> None:
         }
     ).to_csv(path, index=False)
 
-
 def test_loader_drops_index_filters_exercises_and_reports_dataset(tmp_path) -> None:
     csv_path = tmp_path / "synthetic_db1.csv"
     _synthetic_db1_csv(csv_path)
 
-    frame, report = load_ninapro_csv(csv_path, exercises=(2, 3))
+    frame, report = load_ninapro_csv(csv_path, exercises = (2, 3))
 
     assert frame["exercise"].tolist() == [2, 3, 3]
     assert "Unnamed: 0" not in frame.columns
@@ -38,10 +36,9 @@ def test_loader_drops_index_filters_exercises_and_reports_dataset(tmp_path) -> N
     assert report["restimulus_label_scope"]["labels_globally_unique_across_exercises"] is False
     assert report["restimulus_label_scope"]["recommended_model_label_key"] == "(exercise, restimulus)"
 
-
 def test_loader_raises_a_clear_error_for_missing_required_columns(tmp_path) -> None:
     csv_path = tmp_path / "invalid.csv"
-    pd.DataFrame({"subject": [1], "exercise": [2]}).to_csv(csv_path, index=False)
+    pd.DataFrame({"subject": [1], "exercise": [2]}).to_csv(csv_path, index = False)
 
-    with pytest.raises(ValueError, match="Missing required column\\(s\\):"):
+    with pytest.raises(ValueError, match = "Missing required column\\(s\\):"):
         load_ninapro_csv(csv_path)
