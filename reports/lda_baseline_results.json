@@ -1,0 +1,114 @@
+{
+  "model": "LDA (solver=svd)",
+  "feature_columns_used": [
+    "mav_emg_0",
+    "mav_emg_1",
+    "mav_emg_2",
+    "mav_emg_3",
+    "mav_emg_4",
+    "mav_emg_5",
+    "mav_emg_6",
+    "mav_emg_7",
+    "mav_emg_8",
+    "mav_emg_9",
+    "rms_emg_0",
+    "rms_emg_1",
+    "rms_emg_2",
+    "rms_emg_3",
+    "rms_emg_4",
+    "rms_emg_5",
+    "rms_emg_6",
+    "rms_emg_7",
+    "rms_emg_8",
+    "rms_emg_9",
+    "wl_emg_0",
+    "wl_emg_1",
+    "wl_emg_2",
+    "wl_emg_3",
+    "wl_emg_4",
+    "wl_emg_5",
+    "wl_emg_6",
+    "wl_emg_7",
+    "wl_emg_8",
+    "wl_emg_9",
+    "ssc_emg_0",
+    "ssc_emg_1",
+    "ssc_emg_2",
+    "ssc_emg_3",
+    "ssc_emg_4",
+    "ssc_emg_5",
+    "ssc_emg_6",
+    "ssc_emg_7",
+    "ssc_emg_8",
+    "ssc_emg_9"
+  ],
+  "feature_columns_excluded": [
+    "zc_emg_0",
+    "zc_emg_1",
+    "zc_emg_2",
+    "zc_emg_3",
+    "zc_emg_4",
+    "zc_emg_5",
+    "zc_emg_6",
+    "zc_emg_7",
+    "zc_emg_8",
+    "zc_emg_9"
+  ],
+  "empirical_priors": {
+    "validation_accuracy": 0.6259511776485173,
+    "validation_macro_f1": 0.10992662658476422,
+    "validation_accuracy_per_subject": {
+      "16": 0.6683821916806784,
+      "20": 0.6304041485823798,
+      "23": 0.5802276182492434
+    },
+    "cv_folds": 6,
+    "cv_fold_accuracies": [
+      0.5986949273181521,
+      0.608302548072369,
+      0.583314345390677,
+      0.5746963205825307,
+      0.6203182165447928,
+      0.6232937699514062
+    ],
+    "cv_fold_macro_f1": [
+      0.1215670153729245,
+      0.0962227221906669,
+      0.09884122471669958,
+      0.08613236758493491,
+      0.10347856896405318,
+      0.0955748738613066
+    ],
+    "cv_mean_accuracy": 0.6014366879766546,
+    "cv_mean_macro_f1": 0.10030279544843095
+  },
+  "uniform_priors": {
+    "validation_accuracy": 0.4050967864975684,
+    "validation_macro_f1": 0.12021193993673955,
+    "validation_accuracy_per_subject": {
+      "16": 0.4304115797938446,
+      "20": 0.42883715686827123,
+      "23": 0.35655929867435815
+    },
+    "cv_folds": 6,
+    "cv_fold_accuracies": [
+      0.4164242346073556,
+      0.42226484796817276,
+      0.4900693059906959,
+      0.40962052582168573,
+      0.5599965834191433,
+      0.5536284325891123
+    ],
+    "cv_fold_macro_f1": [
+      0.13399110109370962,
+      0.09905533294092454,
+      0.11266981216818828,
+      0.09365235555524944,
+      0.1185727986994907,
+      0.1117409494126724
+    ],
+    "cv_mean_accuracy": 0.475333988399361,
+    "cv_mean_macro_f1": 0.1116137249783725
+  },
+  "saved_model_priors": "empirical"
+}

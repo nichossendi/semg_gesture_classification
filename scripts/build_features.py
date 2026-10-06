@@ -3,17 +3,12 @@ Build feature matrices from windowed data, split by subject.
 
 Usage:
     python scripts/build_features.py --windows-dir data/processed/full --out data/processed/features
-
-Reads windows_emg.npy + windows_metadata.parquet (from
-scripts/run_windowing.py), computes MAV/RMS/WL/ZC/SSC per channel for
-every window, encodes composite_label to an integer class index, joins
-to the subject split from config.yaml, and saves one feature
-matrix per split (train/validation/test/holdout).
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 import time
 from pathlib import Path
@@ -22,24 +17,22 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-import numpy as np
 import pandas as pd
+import numpy as np
 import yaml
 
 from src.features import build_feature_matrix, check_signal_is_rectified  # noqa: E402
 from src.labels import build_label_encoding, save_label_encoding  # noqa: E402
 from src.split import SPLIT_NAMES, validate_subject_split  # noqa: E402
 
-
 def load_config() -> dict:
     with open(REPO_ROOT / "config.yaml") as f:
         return yaml.safe_load(f)
 
-
 def main() -> None:
     parser = argparse.ArgumentParser(description = __doc__)
-    parser.add_argument("--windows-dir", type = Path, required = True, help = "Directory from run_windowing.py's --out")
-    parser.add_argument("--out", type = Path, required = True, help = "Output directory for feature matrices")
+    parser.add_argument("--windows-dir", type = Path, required = True)
+    parser.add_argument("--out", type = Path, required = True)
     args = parser.parse_args()
 
     config = load_config()
@@ -58,38 +51,23 @@ def main() -> None:
     if len(metadata) != emg.shape[0]:
         raise ValueError(
             f"Metadata has {len(metadata):,} rows but the EMG array has "
-            f"{emg.shape[0]:,}. These files are supposed to be row-aligned "
-            "and shouldn't be used if they've drifted apart."
+            f"{emg.shape[0]:,} - files are supposed to be row-aligned."
         )
 
-    # This check exists specifically because the raw-trace figures
-    # suggested the signal might already be rectified, see
-    # src/features.py's check_signal_is_rectified docstring. The result
-    # changes how much you should trust the ZC feature below.
     is_rectified = check_signal_is_rectified(emg)
     print(f"\nSignal is rectified (no negative values anywhere): {is_rectified}")
     if is_rectified:
         print(
-            "  -> ZC is structurally degenerate on this data (will be constant, "
-            "likely all zero, for every window). It is still computed and saved "
-            "below, for a complete, auditable record, but, treat it as a "
-            "non-feature at modeling time, not as a working one."
+            "  -> ZC is structurally degenerate on this data. Still computed and "
+            "saved for a complete, auditable record, treat as a non-feature at "
+            "modeling time, not a working one."
         )
 
     print("\nExtracting features...")
     t0 = time.time()
     n_channels = emg.shape[2]
     if n_channels != 10:
-        raise ValueError(
-            f"Expected 10 EMG channels (DB1's documented channel count), got {n_channels}. "
-            "Check windows_emg.npy actually came from the real DB1 windowing run, not a stale "
-            "or mismatched file."
-        )
-    # windows_metadata.parquet doesn't carry per-channel column names (that
-    # only ever lived in the source dataframe). Reconstructing "emg_N"
-    # here relies on run_windowing.py having built the array in that same
-    # fixed emg_0..emg_9 order, which it does (column order is preserved
-    # from the source CSV via a startswith("emg_") filter).
+        raise ValueError(f"Expected 10 EMG channels, got {n_channels}.")
     channel_labels = [f"emg_{i}" for i in range(n_channels)]
     feature_matrix, feature_columns = build_feature_matrix(
         emg, channel_labels, zc_threshold = zc_threshold, ssc_threshold = ssc_threshold
@@ -104,28 +82,24 @@ def main() -> None:
     args.out.mkdir(parents = True, exist_ok = True)
     save_label_encoding(label_encoding, REPO_ROOT / args.out / "label_encoding.json")
 
-    # Reuse the overlap/exhaustiveness check rather than re-deriving
-    # it. The split groups here come straight from config.yaml, but this
-    # confirms they still form a valid partition of all 27 subjects
-    # before anything gets written to disk based on them.
+    # NEW: save the feature column names alongside the matrices, so any
+    # downstream code reads column identity from the data itself instead
+    # of silently hardcoding "columns 0-9 are MAV, 10-19 are RMS...".
+    # That assumption was previously implicit and unverified anywhere.
+    with open(REPO_ROOT / args.out / "feature_columns.json", "w") as f:
+        json.dump(feature_columns, f, indent = 2)
+    print(f"Saved feature_columns.json ({len(feature_columns)} columns)")
+
     all_subjects = subject_split["subject_ids"]
     split_groups = {name: subject_split[name] for name in SPLIT_NAMES}
     validate_subject_split(split_groups, expected_subject_ids = all_subjects)
 
     print("\nSplitting and saving:")
-    if "window_index" not in metadata.columns:
-        raise ValueError(
-            "windows_metadata.parquet has no 'window_index' column. This "
-            "script expects the exact output format save_windows() in "
-            "scripts/run_windowing.py produces. Re-run that first if this "
-            "file came from somewhere else."
-        )
     subject_col = metadata["subject"].to_numpy()
     window_index_col = metadata["window_index"].to_numpy()
     for split_name in SPLIT_NAMES:
         subjects_in_split = set(subject_split[split_name])
         mask = np.isin(subject_col, list(subjects_in_split))
-
         split_path = REPO_ROOT / args.out / f"{split_name}.npz"
         np.savez(
             split_path,
@@ -137,7 +111,6 @@ def main() -> None:
         print(f"  {split_name:<10} {mask.sum():>9,} windows  -> {split_path}")
 
     print(f"\nFeature columns ({len(feature_columns)}): {feature_columns}")
-
 
 if __name__ == "__main__":
     main()
